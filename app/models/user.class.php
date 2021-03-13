@@ -160,26 +160,58 @@ Class User
       return $text;
     }
 
-    public function check_login()
+    public function check_login($redirect = false,$allowed = array())
 
     {
-       if(isset($_SESSION['user_url']))
-       {
-         
-         $arr['url'] = $_SESSION['user_url'];
-         $query = "select *from users where url_address = :url limit 1";
 
-         $db = Database::getInstance();
+      $db = Database::getInstance();
 
-         $result = $db->read($query,$arr);
+      if(count($allowed) > 0){
 
-         if(is_array($result))
-         {
-            return $result[0];
+           $arr['url'] = $_SESSION['user_url'];
+
+           $query ="select rank from users = where url_address = :url limit 1 ";
+      
+           $result = $db->read($query,$arr);
+
+           if(is_array($result))
+           {
+               $result = $result[0];
+              if(in_array($row->$rank, $allowed)){
+
+               return $result;
+
+              }
+           
+           } else {
+           
+               header("Location: " . ROOT . "login");
+               die;
+            }
+         }else{
+
+      
+             if(isset($_SESSION['user_url']))
+             {
+                
+               $arr = false;
+               $arr['url'] = $_SESSION['user_url'];
+               $query = "select *from users where url_address = :url limit 1";
+      
+               $result = $db->read($query,$arr);
+
+              if(is_array($result))
+               {
+                  return $result[0];
+               }
+      
+
+             }
+             if($redirect){
+                header("Location: " . ROOT . "login");
+               die;
+               }
          }
-
-
-       }
 
        return false;
     }

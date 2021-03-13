@@ -11,8 +11,8 @@
 					<div class="login-form"><!--login form-->
 						<h2>Login to your account</h2>
 						<form method="post">
-							<input type="email"name="email"  placeholder="Email Address" />
-							<input type="password" name="password" placeholder="Password" />
+							<input type="email"name="email" value="<?= isset($_POST['email']) ? $_POST['email']: '';?>" placeholder="Email Address" />
+							<input type="password" name="password" value="<?= isset($_POST['password']) ? $_POST['password']: '';?>" placeholder="Password" />
 							<span>
 								<input type="checkbox" class="checkbox"> 
 								Keep me signed in
@@ -28,13 +28,6 @@
 			</div>
 		</div>
 	</section><!--/form-->
-
-	<script src="js/jquery.js"></script>
-	<script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
 	
 	<?php $this->view("footer",$data); ?>
 
