@@ -38,7 +38,7 @@
 				<p id="user_text" class="small mt"style="cursor:pointer;color:green"><i class="fa fa-edit"> EDIT</i></p>
 			</div>
 			<div class="col-md-6">
-				<p id="user_text" class="small mt"style="cursor:pointer;color:red"><i class="fa fa-delete"> DELETE</i></p>
+				<p id="user_text" class="small mt"style="cursor:pointer;color:red"><i class="fas fa-trash"></i> DELETE</i></p>
 			</div>
 	</div>
 </div><!-- /col-md-4 -->
