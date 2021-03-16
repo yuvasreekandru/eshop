@@ -7,6 +7,10 @@ Class Controller
         if(file_exists("../app/views/" . THEME . $path . ".php"))
         {
             include "../app/views/" . THEME . $path . ".php";
+        }else{
+
+            include "../app/views/" . THEME . "404.php";
+
         }
     }
     public function load_model($model)
