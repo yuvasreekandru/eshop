@@ -4,7 +4,8 @@
 
 <style type="text/css">
 
-         .add_new{
+         .add_new,
+		 .edit_category{
              
 			 width:500px;
 			 height:300px;
@@ -46,29 +47,37 @@
 											<br>
           	
 								  </div>
-								  <!-- add new category -->
+								  <!-- add new category end-->
+								  
+								  <!-- edit category -->
+                                  <div class="edit_category hide">
+                                        	  <h4 class="mb"><i class="fa fa-angle-right"></i> Edit Category</h4>
+                                              <form class="form-horizontal style-form" method="post">
+                                               <div class="form-group">
+                                                   <label class="col-sm-2 col-sm-2 control-label">Category Name:</label>
+                                                   <div class="col-sm-10">
+                                                       <input id="category_edit" name="category" type="text" class="form-control" autofocus>
+                                                   </div>
+                                               </div>
+											   <button type="button" class="btn btn-warning " onclick="show_edit_category(0,'',event)" style="position:absolute;bottom:10px;left:10px;">Cancel</button>
+											   <button type="button" class="btn btn-primary " onclick="collect_edit_data(event)" style="position:absolute;bottom:10px;right:10px;">Save</button>
+
+                                            </form>
+											<br>
+          	
+								  </div>
+								  <!-- edit category end-->
 	                  	  	  <hr>
                               <thead>
                               <tr>
                                   <th><i class="fa fa-bullhorn"></i> Category</th>
-                                  <th class="hidden-phone"><i class="fa fa-question-circle"></i> Descrition</th>
-                                  <th><i class="fa fa-bookmark"></i> Price</th>
                                   <th><i class=" fa fa-edit"></i> Status</th>
                                   <th><i class=" fa fa-edit"></i> Action</th>
                               </tr>
                               </thead>
-                              <tbody>
-                              <tr>
-                                  <td><a href="basic_table.html#">Company Ltd</a></td>
-                                  <td class="hidden-phone">Lorem Ipsum dolor</td>
-                                  <td>12000.00$ </td>
-                                  <td><span class="label label-info label-mini">Enabled</span></td>
-                                  <td>
-                                      <button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button>
-                                      <button class="btn btn-primary btn-xs"><i class="fa fa-pencil"></i></button>
-                                      <button class="btn btn-danger btn-xs"><i class="fa fa-trash-o "></i></button>
-                                  </td>
-                              </tr>
+                              <tbody id="table_body">
+
+									<?= $tbl_rows ?>
                              
                               </tbody>
                           </table>
@@ -78,15 +87,39 @@
 
 <script type="text/javascript">
 
+     var EDIT_ID = 0;
      function show_add_new(){
 
-          const show_add_box = document.querySelector(".add_new");
+          const show_edit_box = document.querySelector(".add_new");
 		  const category_input = document.querySelector("#category");
+
+		  if(show_edit_box.classList.contains("hide")){
+
+			show_edit_box.classList.remove("hide");
+			category_input.focus();
+
+		  }else{
+
+			show_edit_box .classList.add("hide");
+			category_input.value = "";
+		  }
+	
+        }
+		
+     function show_edit_category(id,category,e)
+	 {
+
+          EDIT_ID = id;
+          const show_add_box = document.querySelector(".edit_category");
+		  show_add_box.style.left = (e.clientX - 800)+ "px";
+		  show_add_box.style.top = (e.clientY - 150)+ "px";
+
+		  const category_input = document.querySelector("#category_edit");
+		  category_input.value = category;
 
 		  if(show_add_box.classList.contains("hide")){
 
 			show_add_box.classList.remove("hide");
-
 
 			category_input.focus();
 
@@ -111,11 +144,34 @@
 			var data = category_input.value.trim();
 
 			send_data({
+		
 				           data:data,
 				           data_type:'add_category'
 			          });
 
 		}
+
+		function collect_edit_data(e)
+		{
+             
+			 var category_input = document.querySelector("#category_edit");
+ 
+			 if(category_input.value.trim() == "" || !isNaN(category_input.value.trim()))
+			 {
+ 
+				 alert("Please enter a valid category name");
+			 }
+			 
+			 var data = category_input.value.trim();
+ 
+			 send_data({
+		            		id:EDIT_ID,
+							category:data,
+							data_type:'edit_category'
+					   });
+ 
+		 }
+
 		function send_data(data = {}){
 
 			var ajax = new XMLHttpRequest();
@@ -130,17 +186,98 @@
 			});
 
 			
-			ajax.open("POST","<?= ROOT ?>ajax",true);
+			ajax.open("POST","<?= ROOT ?>ajax_category",true);
 			ajax.send(JSON.stringify(data));
 			
 		}
         
 		function handle_result(result)
 		{
-			alert (result);
-		    show_add_new();
+			console.log(result);
+			if(result != "")
+			{
+
+		    	var obj = JSON.parse (result);
+
+			  if(typeof obj.data_type != 'undefined')
+			  {
+
+				if(obj.data_type == "add_new")
+				{
+                      if(obj.message_type == "info")
+				      {
+				     	alert(obj.message);
+		                 show_add_new();
+     
+				     	var table_body = document.querySelector("#table_body");
+
+				     	table_body.innerHTML = obj.data;
+			     	 }else
+				     {
+			     		 alert(obj.message);
+			     	 }
+			     	}else
+					 if(obj.data_type == "edit_category")
+					 {
+
+		                 show_edit_category(0,'',false);
+     
+				     	var table_body = document.querySelector("#table_body");
+
+				     	table_body.innerHTML = obj.data;
+						// alert(obj.message);
+					 }else
+					 if(obj.data_type == "disable_row")
+
+					 {
+
+                        var table_body = document.querySelector("#table_body");
+				     	table_body.innerHTML = obj.data;
+
+					 }else
+					 if(obj.data_type == "delete_row")
+
+					 {
+						var table_body = document.querySelector("#table_body");
+                        table_body.innerHTML = obj.data;
+
+						 alert(obj.message);
+					 }
+              }
+			}
 
 		}
+
+		function edit_row(id)
+		{
+			send_data({
+
+				data_type: ""
+			});
+ 		}
+		 function delete_row(id)
+		{
+			if(!confirm("Are you sure you want to delete this row?"))
+			{
+				return;
+			}
+			send_data({
+
+				data_type: "delete_row",
+				id:id
+			});
+ 		}
+		 function disable_row(id,state)
+		{
+			
+			send_data({
+
+				data_type: "disable_row",
+				id:id,
+				current_state:state
+			});
+ 		}
+
 </script>			  
 
 <?php $this->view("admin/footer",$data); ?>

@@ -29,6 +29,11 @@ Class Database
 
        return $instance = new self();
     }
+    public static function newInstance()
+    {
+       return $instance = new self();
+    }
+ 
  
     // read from database
 
