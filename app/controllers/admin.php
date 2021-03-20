@@ -21,7 +21,6 @@ Class Admin extends Controller
    }
 
    public function categories()
-
    {
       $User = $this->load_model('User');
 
@@ -34,12 +33,15 @@ Class Admin extends Controller
       }
 
             $DB = Database::newInstance();
-            $categories = $DB->read("select * from categories order by id desc");
-      
+            $categories_all = $DB->read("select * from categories order by id desc");
+            $categories = $DB->read("select * from  categories where disabled = 0 order by id desc");
+
             $category = $this->load_model("Category");
-            $tbl_rows = $category->make_table($categories);
+            $tbl_rows = $category->make_table($categories_all);
             // var_dump($tbl_rows);
             $data['tbl_rows'] = $tbl_rows;
+            $data['categories'] = $categories;
+
             
       $data['page_title'] = "Admin";
       
@@ -65,7 +67,9 @@ Class Admin extends Controller
             $categories = $DB->read("select * from  categories where disabled = 0 order by id desc");
 
             $product = $this->load_model("Product");
-            $tbl_rows = $product->make_table($products);
+            $category = $this->load_model("Category");
+
+            $tbl_rows = $product->make_table($products,$category);
             $data['tbl_rows'] = $tbl_rows;
             $data['categories'] = $categories;
 

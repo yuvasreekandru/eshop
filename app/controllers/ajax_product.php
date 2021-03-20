@@ -5,20 +5,21 @@ Class Ajax_product extends Controller
    public function index()
 
    {
-     $data = file_get_contents("php://input");
-
-     $data = json_decode($data);
+    //  $data = file_get_contents("php://input");
+     $data = (object)$_POST;
 
      if(is_object($data) && isset($data->data_type))
      {
           $DB = Database::getInstance();
           $product = $this->load_Model('Product');
+          $category = $this->load_Model('Category');
+
           
           if($data->data_type == 'add_product')
           {
             // add new product
 
-            $check = $product->create($data);
+            $check = $product->create($data,$_FILES);
 
             if($_SESSION['error'] != "")
             {
@@ -38,7 +39,7 @@ Class Ajax_product extends Controller
               $arr['message'] = "Product added successfully!";
               $arr['message_type'] = "info";
               $cats = $product->get_all();
-              $arr['data'] = $product->make_table($cats);
+              $arr['data'] = $product->make_table($cats,$category);
               $arr['data_type'] = "add_new";
 
 
